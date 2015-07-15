@@ -34,8 +34,8 @@ toDigits' n
 
 -- Double every second number in a list starting on the left.
 doubleEveryOther :: [Integer] -> [Integer]
-doubleEveryOther [] 					=	[]
-doubleEveryOther [a] 					= [a]
+doubleEveryOther [] 		= []
+doubleEveryOther [a] 		= [a]
 doubleEveryOther (a : b : tl) =	a : (b+b) : doubleEveryOther tl
 
 -- Exercise 4 -----------------------------------------
@@ -65,6 +65,6 @@ hanoi 1 a _ c = [(a,c)]
 hanoi n a b c =
 	concat [
 		hanoi (n-1) a c b,
-    hanoi    1  a b c,
+		hanoi    1  a b c,
 		hanoi (n-1) b a c
 		]
