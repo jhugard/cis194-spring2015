@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "libcis-194-homework", "libcis-194-homework\libcis-194-homework.fsproj", "{94F89748-60AD-48E7-909D-B063088D0F27}"
+EndProject
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "testcis-194-homework", "testcis-194-homework\testcis-194-homework.fsproj", "{202B3E80-A21F-49B1-8310-9B3CF759A1BE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{202B3E80-A21F-49B1-8310-9B3CF759A1BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{202B3E80-A21F-49B1-8310-9B3CF759A1BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{202B3E80-A21F-49B1-8310-9B3CF759A1BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{202B3E80-A21F-49B1-8310-9B3CF759A1BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94F89748-60AD-48E7-909D-B063088D0F27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94F89748-60AD-48E7-909D-B063088D0F27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94F89748-60AD-48E7-909D-B063088D0F27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94F89748-60AD-48E7-909D-B063088D0F27}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
