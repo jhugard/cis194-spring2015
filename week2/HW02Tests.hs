@@ -51,17 +51,40 @@ ex4Tests = [ testF2 "isConsistent test" isConsistent
 -- Exercise 5 -----------------------------------------
 
 ex5Tests :: [Test]
-ex5Tests = []
+ex5Tests = [ testF2 "filterCodes test" filterCodes
+             [ (Move [Red, Red, Blue, Green] 1 1,
+                [ [Red, Blue, Yellow, Purple], [Red, Blue, Red, Purple] ],
+                [[Red, Blue, Yellow, Purple]])
+             ]
+           ]
+
 
 -- Exercise 6 -----------------------------------------
 
+-- Determine if all generates a particular code
+doesAllGenerate :: Code -> Bool
+doesAllGenerate code =
+  code `elem` allCodes (length code)
+
 ex6Tests :: [Test]
-ex6Tests = []
+ex6Tests = [ Test "allCodes test" doesAllGenerate
+            [
+              [Red], [Green], [Blue], [Yellow], [Orange], [Purple],
+
+              [Red,Red], [Red,Green], [Red,Blue], [Red,Yellow], [Red,Orange], [Red,Purple],
+              [Green,Red], [Green,Green], [Green,Blue], [Green,Yellow], [Green,Orange], [Green,Purple],
+              [Blue,Red], [Blue,Green], [Blue,Blue], [Blue,Yellow], [Blue,Orange], [Blue,Purple],
+              [Yellow,Red], [Yellow,Green], [Yellow,Blue], [Yellow,Yellow], [Yellow,Orange], [Yellow,Purple],
+              [Orange,Red], [Orange,Green], [Orange,Blue], [Orange,Yellow], [Orange,Orange], [Orange,Purple],
+              [Purple,Red], [Purple,Green], [Purple,Blue], [Purple,Yellow], [Purple,Orange], [Purple,Purple]
+            ]
+           ]
 
 -- Exercise 7 -----------------------------------------
 
 ex7Tests :: [Test]
 ex7Tests = []
+
 
 -- Bonus ----------------------------------------------
 
