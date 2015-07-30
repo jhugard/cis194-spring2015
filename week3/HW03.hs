@@ -7,14 +7,14 @@ data Expression =
   deriving (Show, Eq)
 
 -- Binary (2-input) operators
-data Bop = 
-    Plus     
-  | Minus    
-  | Times    
-  | Divide   
+data Bop =
+    Plus
+  | Minus
+  | Times
+  | Divide
   | Gt
-  | Ge       
-  | Lt  
+  | Ge
+  | Lt
   | Le
   | Eql
   deriving (Show, Eq)
@@ -23,9 +23,9 @@ data Statement =
     Assign   String     Expression
   | Incr     String
   | If       Expression Statement  Statement
-  | While    Expression Statement       
+  | While    Expression Statement
   | For      Statement  Expression Statement Statement
-  | Sequence Statement  Statement        
+  | Sequence Statement  Statement
   | Skip
   deriving (Show, Eq)
 
@@ -34,15 +34,46 @@ type State = String -> Int
 -- Exercise 1 -----------------------------------------
 
 extend :: State -> String -> Int -> State
-extend = undefined
-
+extend st ident val ident' =
+  if ident == ident' then val
+                     else st ident'
 empty :: State
-empty = undefined
+empty _ = 0
 
 -- Exercise 2 -----------------------------------------
 
+false :: Int
+true  :: Int
+boolToInt :: Bool -> Int
+intToBool :: Int -> Bool
+
+false = 0
+true  = 1
+boolToInt False = false
+boolToInt True  = true
+intToBool b = b == true
+
+evalBop :: Bop -> Int -> Int -> Int
+evalBop bop =
+  case bop of
+    Plus -> (+)
+    Minus -> (-)
+    Times -> (*)
+    Divide -> div
+    Gt -> mkBoolOp (>)
+    Ge -> mkBoolOp (>=)
+    Lt -> mkBoolOp (<)
+    Le -> mkBoolOp (<=)
+    Eql -> mkBoolOp (==)
+  where
+    mkBoolOp op a b = boolToInt ( a `op` b )
+
 evalE :: State -> Expression -> Int
-evalE = undefined
+evalE st (Var ident)  = st ident
+evalE _  (Val x)      = x
+evalE st (Op a bop b) = evalE st a `op` evalE st b
+                        where
+                            op = evalBop bop
 
 -- Exercise 3 -----------------------------------------
 
@@ -54,16 +85,50 @@ data DietStatement = DAssign String Expression
                      deriving (Show, Eq)
 
 desugar :: Statement -> DietStatement
-desugar = undefined
+desugar (Assign v ex) = DAssign v ex
+desugar (Incr v)      = DAssign v (Op (Var v) Plus (Val 1))
+desugar (If p t f)    = DIf p (desugar t) (desugar f)
+desugar (While p st)  = DWhile p (desugar st)
+desugar (For i p u st) =   -- for( init; loop condition; update )
+                           --    block
+  DSequence (desugar i)         -- init
+            (DWhile p           -- loop condition
+              (DSequence
+                (desugar st)    -- block
+                (desugar u)))   -- update
+desugar (Sequence a b)  = DSequence (desugar a) (desugar b)
+desugar (Skip)          = DSkip
 
 
 -- Exercise 4 -----------------------------------------
 
 evalSimple :: State -> DietStatement -> State
-evalSimple = undefined
+
+evalSimple st (DAssign v ex) =
+  extend st v (evalE st ex)
+
+evalSimple st (DIf p t f) =
+  if evalE st p == true
+    then evalSimple st t
+    else evalSimple st f
+
+evalSimple state (DWhile p block) =
+  aux state
+  where
+    aux st =
+      if evalE st p == true
+        then aux (evalSimple st block)
+        else st
+
+evalSimple st (DSequence a b) =
+  let st' = evalSimple st a in
+  evalSimple st' b
+
+evalSimple st (DSkip) =
+  st
 
 run :: State -> Statement -> State
-run = undefined
+run state statement = evalSimple state (desugar statement)
 
 -- Programs -------------------------------------------
 
@@ -86,22 +151,22 @@ factorial = For (Assign "Out" (Val 1))
 
 {- Calculate the floor of the square root of the input
 
-   B := 0;
-   while (A >= B * B) {
-     B++
+   Out := 0;
+   while (In >= Out * Out) {
+     Out++
    };
-   B := B - 1
+   Out := Out - 1
 -}
 squareRoot :: Statement
-squareRoot = slist [ Assign "B" (Val 0)
-                   , While (Op (Var "A") Ge (Op (Var "B") Times (Var "B")))
-                       (Incr "B")
-                   , Assign "B" (Op (Var "B") Minus (Val 1))
+squareRoot = slist [ Assign "Out" (Val 0)
+                   , While (Op (Var "In") Ge (Op (Var "Out") Times (Var "Out")))
+                       (Incr "Out")
+                   , Assign "Out" (Op (Var "Out") Minus (Val 1))
                    ]
 
 {- Calculate the nth Fibonacci number
 
-   F0 := 1;
+   F0 := 0;
    F1 := 1;
    if (In == 0) {
      Out := F0
@@ -119,7 +184,7 @@ squareRoot = slist [ Assign "B" (Val 0)
    }
 -}
 fibonacci :: Statement
-fibonacci = slist [ Assign "F0" (Val 1)
+fibonacci = slist [ Assign "F0" (Val 0)
                   , Assign "F1" (Val 1)
                   , If (Op (Var "In") Eql (Val 0))
                        (Assign "Out" (Var "F0"))
