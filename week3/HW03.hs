@@ -113,16 +113,16 @@ evalSimple st (DIf p t f) =
     else evalSimple st f
 
 evalSimple state (DWhile p block) =
-  aux state
+  loop state
   where
-    aux st =
+    loop st =
       if evalE st p == true
-        then aux (evalSimple st block)
+        then loop (evalSimple st block)
         else st
 
 evalSimple st (DSequence a b) =
-  let st' = evalSimple st a in
-  evalSimple st' b
+  let st' = evalSimple st a
+  in evalSimple st' b
 
 evalSimple st (DSkip) =
   st

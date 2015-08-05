@@ -1,32 +1,71 @@
 {-# OPTIONS_GHC -Wall #-}
 module HW04 where
 
+import Data.List
+
 newtype Poly a = P [a]
 
 -- Exercise 1 -----------------------------------------
 
 x :: Num a => Poly a
-x = undefined
+x = P [1]
 
 -- Exercise 2 ----------------------------------------
 
+normalizeTermsRev :: (Num a, Eq a) => [a] -> [a]
+normalizeTermsRev =
+      dropWhile (\v -> v == (v - v)) . reverse
+
 instance (Num a, Eq a) => Eq (Poly a) where
-    (==) = undefined
- 
+    (==) (P xs) (P ys) =
+      normalizeTermsRev xs == normalizeTermsRev ys
+
 -- Exercise 3 -----------------------------------------
 
-instance (Num a, Eq a, Show a) => Show (Poly a) where
-    show = undefined
+instance (Num a, Eq a, Enum a, Show a) => Show (Poly a) where
+    show (P terms)  =
+      let terms' = normalizeTermsRev terms in
+      let sterms' = showPoly terms' (length terms' - 1) in
+      intercalate " + " sterms'
+      where
+          showPoly [] _     = ["0"]
+          showPoly [h] _    = [show h]
+          showPoly (h:tl) d -- d == degree
+            | h == (h-h) = showPoly tl (d - 1)
+            | d == 1 = (showTerm h ++ "x") : showPoly tl 0
+            | otherwise = (showTerm h ++ "x^" ++ show d) : showPoly tl (d-1)
+          showTerm t
+            | t == (t-t)      = "" -- term == 0; should never happen
+            | t == succ (t-t) = "" -- term == 1
+            | otherwise       = show t
 
 -- Exercise 4 -----------------------------------------
 
-plus :: Num a => Poly a -> Poly a -> Poly a
-plus = undefined
+zipWithTail :: (a -> a -> a) -> [a] -> [a] -> [a]
+zipWithTail f (a:ta) (b:tb) = f a b : zipWithTail f ta tb
+zipWithTail _ a [] = a
+zipWithTail _ [] b = b
+
+plus :: (Num a) => Poly a -> Poly a -> Poly a
+plus (P as) (P bs) =
+  P (zipWithTail (+) as bs)
 
 -- Exercise 5 -----------------------------------------
 
-times :: Num a => Poly a -> Poly a -> Poly a
-times = undefined
+times :: (Num a, Enum a) => Poly a -> Poly a -> Poly a
+times (P as) (P bs) =
+  P (sumPolys (mulTerms as bs 0))
+  where
+    sumPolys [] = []
+    sumPolys ps = foldr1 (zipWithTail (+)) ps
+
+    mulTerms :: (Num t, Enum t) => [t] -> [t] -> Int -> [[t]]
+    mulTerms [] bs degree = [[]]
+    mulTerms (h:tl) bs degree =
+      let zero = (h-h)
+      in replicate degree zero
+          ++ map (\b -> h * b) bs
+          : mulTerms tl bs (degree+1)
 
 -- Exercise 6 -----------------------------------------
 
@@ -55,4 +94,3 @@ class Num a => Differentiable a where
 
 instance Num a => Differentiable (Poly a) where
     deriv = undefined
-
