@@ -9,8 +9,7 @@ import Control.Monad hiding (mapM, liftM)
 import Control.Monad.Random
 import Data.Functor
 import Data.Monoid
-import Data.Vector (Vector, cons, (!), (!?), (//))
-import System.Random
+import Data.Vector (Vector, (!), (!?), (//))
 
 import qualified Data.Vector as V
 
@@ -18,38 +17,86 @@ import qualified Data.Vector as V
 -- Exercise 1 -----------------------------------------
 
 liftM :: Monad m => (a -> b) -> m a -> m b
-liftM = undefined
+liftM f ma =
+  ma >>= return . f -- aka, (\a -> return $ f a)
 
 swapV :: Int -> Int -> Vector a -> Maybe (Vector a)
-swapV = undefined
+swapV ix iy v =
+  liftM2 swap (v !? ix) (v !? iy)
+  where
+    swap a b =
+      v // [(iy,a), (ix,b)]
 
 -- Exercise 2 -----------------------------------------
 
 mapM :: Monad m => (a -> m b) -> [a] -> m [b]
-mapM = undefined
+mapM f = sequence . map f
+{- by hand
+mapM f = myseq . map f
+  where
+    myseq =
+      foldr k (return [])
+      where
+        k mx macc = do
+          x <- mx
+          xs <- macc
+          return (x:xs)
+-}
+{- alternative
+        k mx macc =
+            mx >>= (\x ->
+              macc >>= (\xs ->
+                return (x:xs))
+            )
+-}
 
 getElts :: [Int] -> Vector a -> Maybe [a]
-getElts = undefined
+getElts ixs v = mapM (v !?) ixs
 
 -- Exercise 3 -----------------------------------------
 
 type Rnd a = Rand StdGen a
 
 randomElt :: Vector a -> Rnd (Maybe a)
-randomElt = undefined
+randomElt v = do
+  let len = V.length v
+  rndIx <- getRandomR (0,len - 1)
+  return $ v !? rndIx
 
 -- Exercise 4 -----------------------------------------
 
 randomVec :: Random a => Int -> Rnd (Vector a)
-randomVec = undefined
+randomVec n =
+  V.generateM n $ const getRandom
+{-
+randomVec = gen
+  where
+    gen :: Random a => Int -> Rnd (Vector a)
+    gen 0 = return V.empty
+    gen n = do
+      r <- getRandom
+      rs <- gen (n-1)
+      return $ r `V.cons` rs
+-}
 
 randomVecR :: Random a => Int -> (a, a) -> Rnd (Vector a)
-randomVecR = undefined
+randomVecR n (a,z)=
+  V.generateM n $ const $ getRandomR (a,z)
 
 -- Exercise 5 -----------------------------------------
 
 shuffle :: Vector a -> Rnd (Vector a)
-shuffle = undefined
+shuffle v =
+  shuf (return v) (V.length v - 1)
+  where
+    shuf mv 0 = mv
+    shuf mv ix = do
+      v' <- mv
+      iy <- getRandomR (0,ix)
+      let v'' = unsafeSwapV v' ix iy
+      shuf (return v'') (ix-1)
+    unsafeSwapV xs x y =
+      xs // [(x, xs ! y), (y, xs ! x)]
 
 -- Exercise 6 -----------------------------------------
 
@@ -138,7 +185,4 @@ repl s@State{..} | money <= 0  = putStrLn "You ran out of money!"
                   _ | c13 > c23 -> repl $ State (m + amt) d'
                     | c13 < c23 -> repl $ State (m - amt) d'
                     | otherwise -> war (State m d') amt
-              _ -> deckEmpty 
-
-main :: IO ()
-main = evalRandIO newDeck >>= repl . State 100
+              _ -> deckEmpty
