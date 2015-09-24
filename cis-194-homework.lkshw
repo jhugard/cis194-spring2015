@@ -1,0 +1,14 @@
+Version of workspace file format:
+               2
+Time of storage:
+               "Wed Sep 23 20:35:43 Pacific Daylight Time 2015"
+Name of the workspace:
+               "cis-194-homework"
+File paths of contained packages:
+               ["week7\\week7.cabal"]
+Maybe file path of an active package:
+               Just "week7\\week7.cabal"
+Maybe name of an active executable:
+               Nothing
+Version Control System configurations for packages:
+               fromList []

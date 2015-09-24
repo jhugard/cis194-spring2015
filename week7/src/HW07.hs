@@ -7,7 +7,7 @@ import Cards
 
 import Control.Monad hiding (mapM, liftM)
 import Control.Monad.Random
-import Data.Functor
+--import Data.Functor
 import Data.Monoid
 import Data.Vector (Vector, (!), (!?), (//))
 
@@ -101,7 +101,15 @@ shuffle v =
 -- Exercise 6 -----------------------------------------
 
 partitionAt :: Ord a => Vector a -> Int -> (Vector a, a, Vector a)
-partitionAt = undefined
+partitionAt v ixPivot =
+  (left, pivot, right)
+  where
+    end = V.length v - 1
+    ixs = [0..(ixPivot-1)] ++ [(ixPivot+1)..end]
+    pivot = v ! ixPivot
+    left  = V.fromList [ l | ix <- ixs, let l = v ! ix, l < pivot ]
+    right = V.fromList [ r | ix <- ixs, let r = v ! ix, r >= pivot ]
+
 
 -- Exercise 7 -----------------------------------------
 
@@ -113,6 +121,7 @@ quicksort (x:xs) = quicksort [ y | y <- xs, y < x ]
 
 qsort :: Ord a => Vector a -> Vector a
 qsort = undefined
+
 
 -- Exercise 8 -----------------------------------------
 
@@ -165,7 +174,7 @@ repl s@State{..} | money <= 0  = putStrLn "You ran out of money!"
             amt <- read <$> getLine
             if amt < 1 || amt > money
             then play
-            else do
+            else
               case getCards 2 deck of
                 Just ([c1, c2], d) -> do
                   putStrLn $ "You got:\n" ++ show c1

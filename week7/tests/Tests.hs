@@ -70,7 +70,7 @@ main = hspec $ do
           -- let range = V.fromList [low..high]
           -- xs `shouldSatisfy` V.all (`V.elem` range)
 
-      describe "Exercise 5" $ do
+      describe "Exercise 5" $
 
         describe "Check that shuffle produces..." $ do
           it "same length list" $ do
@@ -87,3 +87,40 @@ main = hspec $ do
             let xs = V.fromList [10..90::Integer]
             sx <- evalRandIO (shuffle xs)
             V.zip sx xs `shouldSatisfy` V.any (uncurry (/=))
+
+      describe "Exercise 6" $
+
+        describe "Check Partition" $ do
+
+          let sample = V.fromList [ 10,9..1::Integer ]
+
+          it "Partition homework example 1" $
+            partitionAt (V.fromList [5::Integer, 2, 8, 3, 6, 1]) 3
+            `shouldBe`
+            (V.fromList [2, 1], 3, V.fromList [5, 8, 6])
+
+          it "Partition homework example 2" $
+            partitionAt (V.fromList [1::Integer, 6, 4, 7, 2, 4]) 2
+            `shouldBe`
+            (V.fromList [1, 2], 4, V.fromList [6, 7, 4])
+
+          it "Partition at first element" $
+            partitionAt sample 0
+            `shouldBe` (V.fromList [9,8..1], 10, V.empty)
+
+          it "Partition at last element" $
+            partitionAt sample (V.length sample - 1)
+            `shouldBe` (V.empty, 1, V.fromList [10,9..2])
+
+      describe "Exercise 7" $
+
+        describe "Check qsort" $ do
+
+          it "sorted list" $ do
+            let sample = V.fromList [24..42::Integer]
+            qsort sample `shouldBe` sample
+
+          it "reverse list" $ do
+            let sample = V.fromList [42,41..24::Integer]
+            let sorted = V.fromList [24..42]
+            qsort sample `shouldBe` sorted
