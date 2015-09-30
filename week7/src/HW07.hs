@@ -170,10 +170,13 @@ select ix v
 -- Exercise 10 ----------------------------------------
 
 allCards :: Deck
-allCards = undefined
+allCards = V.fromList
+  [ Card label suit |
+      suit  <- [Spade, Heart, Club, Diamond],
+      label <- [Two .. Ace] ]
 
 newDeck :: Rnd Deck
-newDeck =  undefined
+newDeck =  shuffle allCards
 
 -- Exercise 11 ----------------------------------------
 

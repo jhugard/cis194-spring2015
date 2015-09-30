@@ -3,6 +3,7 @@ module Main where
 
 import Test.Hspec
 import HW07
+import Cards
 
 import Prelude hiding (mapM)
 import qualified Data.Vector as V
@@ -162,3 +163,74 @@ main = hspec $ do
           it "10th sorted element (ix=9) returns 33" $ do
             x <- evalRandIO $ select 9 testV
             x `shouldBe` Just 33
+
+      describe "Exercise 10" $ do
+
+        it "allCards returns all cards" $ do
+          allCards `shouldBe` V.fromList [
+            Card Two Spade,
+            Card Three Spade,
+            Card Four Spade,
+            Card Five Spade,
+            Card Six Spade,
+            Card Seven Spade,
+            Card Eight Spade,
+            Card Nine Spade,
+            Card Ten Spade,
+            Card Jack Spade,
+            Card Queen Spade,
+            Card King Spade,
+            Card Ace Spade,
+
+            Card Two Heart,
+            Card Three Heart,
+            Card Four Heart,
+            Card Five Heart,
+            Card Six Heart,
+            Card Seven Heart,
+            Card Eight Heart,
+            Card Nine Heart,
+            Card Ten Heart,
+            Card Jack Heart,
+            Card Queen Heart,
+            Card King Heart,
+            Card Ace Heart,
+
+            Card Two Club,
+            Card Three Club,
+            Card Four Club,
+            Card Five Club,
+            Card Six Club,
+            Card Seven Club,
+            Card Eight Club,
+            Card Nine Club,
+            Card Ten Club,
+            Card Jack Club,
+            Card Queen Club,
+            Card King Club,
+            Card Ace Club,
+
+            Card Two Diamond,
+            Card Three Diamond,
+            Card Four Diamond,
+            Card Five Diamond,
+            Card Six Diamond,
+            Card Seven Diamond,
+            Card Eight Diamond,
+            Card Nine Diamond,
+            Card Ten Diamond,
+            Card Jack Diamond,
+            Card Queen Diamond,
+            Card King Diamond,
+            Card Ace Diamond
+
+            ]
+
+        it "New deck is not in allCards order, but contains all the same cards" $ do
+          cards <- evalRandIO newDeck
+          cards `shouldNotBe` allCards
+
+        it "New deck contains all cards" $ do
+          cards <- evalRandIO newDeck
+          V.length cards `shouldBe` V.length allCards
+          V.toList cards `shouldMatchList` V.toList allCards
