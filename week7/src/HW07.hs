@@ -120,13 +120,34 @@ quicksort (x:xs) = quicksort [ y | y <- xs, y < x ]
                    <> (x : quicksort [ y | y <- xs, y >= x ])
 
 qsort :: Ord a => Vector a -> Vector a
-qsort = undefined
-
+qsort v
+  | V.length v == 0 =
+      V.empty
+  | otherwise =
+      qsort l
+        <> (p `V.cons` qsort r)
+    where
+      (l,p,r) = partitionAt v 0
 
 -- Exercise 8 -----------------------------------------
 
 qsortR :: Ord a => Vector a -> Rnd (Vector a)
-qsortR = undefined
+qsortR v
+  | V.length v == 0 =
+    return V.empty
+  | otherwise = do
+    part <- partition v
+    let (left,pivot,right) = part
+    sLeft <- qsortR left
+    sRight <- qsortR right
+    return $ sLeft <> (pivot `V.cons` sRight)
+    where
+      partition v' = do
+        ix <- rndIx v'
+        return $ partitionAt v' ix
+      rndIx v'' = do
+        let len = V.length v''
+        getRandomR (0,len-1)
 
 -- Exercise 9 -----------------------------------------
 

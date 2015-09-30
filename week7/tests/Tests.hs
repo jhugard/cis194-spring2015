@@ -75,17 +75,17 @@ main = hspec $ do
         describe "Check that shuffle produces..." $ do
           it "same length list" $ do
             let xs = V.fromList [10..90::Integer]
-            sx <- evalRandIO (shuffle xs)
+            sx <- evalRandIO $ shuffle xs
             V.length sx `shouldBe` V.length xs
 
           it "same elements" $ do
             let xs = V.fromList [10..90::Integer]
-            sx <- evalRandIO (shuffle xs)
+            sx <- evalRandIO $ shuffle xs
             V.toList sx `shouldMatchList` V.toList xs
 
           it "different ordering" $ do
             let xs = V.fromList [10..90::Integer]
-            sx <- evalRandIO (shuffle xs)
+            sx <- evalRandIO $ shuffle xs
             V.zip sx xs `shouldSatisfy` V.any (uncurry (/=))
 
       describe "Exercise 6" $
@@ -112,7 +112,7 @@ main = hspec $ do
             partitionAt sample (V.length sample - 1)
             `shouldBe` (V.empty, 1, V.fromList [10,9..2])
 
-      describe "Exercise 7" $
+      describe "Exercise 7" $ do
 
         describe "Check qsort" $ do
 
@@ -124,3 +124,41 @@ main = hspec $ do
             let sample = V.fromList [42,41..24::Integer]
             let sorted = V.fromList [24..42]
             qsort sample `shouldBe` sorted
+
+      describe "Exercise 8" $ do
+
+        describe "Check qsortR" $ do
+
+          it "sorted list" $ do
+            let sample = V.fromList [24..42::Integer]
+            sortedSample <- evalRandIO $ qsortR sample
+            sortedSample `shouldBe` sample
+
+          it "reverse list" $ do
+            let sample = V.fromList [42,41..24::Integer]
+            let sorted = V.fromList [24..42]
+            sortedSample <- evalRandIO $ qsortR sample
+            sortedSample `shouldBe` sorted
+
+      describe "Exercise 9" $ do
+
+        describe "Given a vector with elements from 42 downto 42" $ do
+          let testV = V.fromList [42,41..24 :: Integer]
+
+          it "Out of bounds index returns Nothing" $ do
+            let lastIx = V.length testV - 1
+            outofbounds <- evalRandIO $ select (lastIx + 1) testV
+            outofbounds `shouldBe` Nothing
+
+          it "Lowest element returns 42" $ do
+            x <- evalRandIO $ select 0 testV
+            x `shouldBe` Just 42
+
+          it "Highest element returns 24" $ do
+            let lastIx = V.length testV - 1
+            x <- evalRandIO $ select lastIx testV
+            x `shouldBe` Just 42
+
+          it "10th element (ix=9) returns 33" $ do
+            x <- evalRandIO $ select 9 testV
+            x `shouldBe` Just 33
