@@ -136,15 +136,12 @@ qsortR v
   | V.length v == 0 =
     return V.empty
   | otherwise = do
-    part <- partition v
-    let (left,pivot,right) = part
+    ix <- rndIx v
+    let (left,pivot,right) = partitionAt v ix
     sLeft <- qsortR left
     sRight <- qsortR right
     return $ sLeft <> (pivot `V.cons` sRight)
     where
-      partition v' = do
-        ix <- rndIx v'
-        return $ partitionAt v' ix
       rndIx v'' = do
         let len = V.length v''
         getRandomR (0,len-1)
@@ -153,7 +150,22 @@ qsortR v
 
 -- Selection
 select :: Ord a => Int -> Vector a -> Rnd (Maybe a)
-select = undefined
+select ix v
+  | V.length v == 0 =
+    return Nothing
+  | ix >= V.length v =
+    return Nothing
+  | otherwise = do
+    rix <- rndIx v
+    let (left,pivot,right) = partitionAt v rix
+    let llen = V.length left
+    if      ix <  llen then select ix left
+    else if ix == llen then return $ Just pivot
+                       else select (ix - llen - 1) right
+    where
+      rndIx v'' = do
+        let len = V.length v''
+        getRandomR (0,len-1)
 
 -- Exercise 10 ----------------------------------------
 

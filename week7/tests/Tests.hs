@@ -150,15 +150,15 @@ main = hspec $ do
             outofbounds <- evalRandIO $ select (lastIx + 1) testV
             outofbounds `shouldBe` Nothing
 
-          it "Lowest element returns 42" $ do
+          it "Lowest sorted element returns 24" $ do
             x <- evalRandIO $ select 0 testV
-            x `shouldBe` Just 42
+            x `shouldBe` Just 24
 
-          it "Highest element returns 24" $ do
+          it "Highest sorted element returns 42" $ do
             let lastIx = V.length testV - 1
             x <- evalRandIO $ select lastIx testV
             x `shouldBe` Just 42
 
-          it "10th element (ix=9) returns 33" $ do
+          it "10th sorted element (ix=9) returns 33" $ do
             x <- evalRandIO $ select 9 testV
             x `shouldBe` Just 33
