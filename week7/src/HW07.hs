@@ -181,7 +181,13 @@ newDeck =  shuffle allCards
 -- Exercise 11 ----------------------------------------
 
 nextCard :: Deck -> Maybe (Card, Deck)
-nextCard = undefined
+nextCard d
+  | V.length d == 0 =
+    Nothing
+  | otherwise =
+    Just (d ! 0, V.unsafeSlice 1 lastIx d)
+    where
+      lastIx = V.length d - 1
 
 -- Exercise 12 ----------------------------------------
 

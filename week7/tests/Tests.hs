@@ -234,3 +234,18 @@ main = hspec $ do
           cards <- evalRandIO newDeck
           V.length cards `shouldBe` V.length allCards
           V.toList cards `shouldMatchList` V.toList allCards
+
+      describe "Exercise 11" $ do
+
+        describe "Check nextCard" $ do
+
+          it "Given an empty deck, nextCard returns Nothing" $ do
+            nextCard V.empty `shouldBe` Nothing
+
+          it "nextCard returns first, then second card of the deck, then empty" $ do
+            let cards = V.fromList [ Card Jack Spade, Card Ace Spade ]
+            let Just (first, cards') = nextCard cards
+            first `shouldBe` Card Jack Spade
+            let Just (second, cards'') = nextCard cards'
+            second `shouldBe` Card Ace Spade
+            nextCard cards'' `shouldBe` Nothing
