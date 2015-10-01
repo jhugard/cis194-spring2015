@@ -26,6 +26,14 @@ library
   hs-source-dirs:      src
   default-language:    Haskell2010
 
+executable HW07
+  main-is:            Main.hs
+  hs-source-dirs:     src
+  build-depends:      base,
+                      vector,
+                      MonadRandom
+  default-language:   Haskell2010
+
 Test-Suite test-week7
   type:           exitcode-stdio-1.0
   main-is:        Tests.hs

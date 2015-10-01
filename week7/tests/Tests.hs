@@ -249,3 +249,21 @@ main = hspec $ do
             let Just (second, cards'') = nextCard cards'
             second `shouldBe` Card Ace Spade
             nextCard cards'' `shouldBe` Nothing
+
+      describe "Exercise 12" $ do
+
+        describe "Check getCards" $ do
+
+          it "Given an empty deck, getCards returns Nothing" $ do
+            getCards 1 V.empty `shouldBe` Nothing
+
+          it "Asking for more cards than are in the deck returns Nothing" $ do
+            let cards = getCards 2 $ V.fromList [Card Queen Spade]
+            cards `shouldBe` Nothing
+
+          it "Asking for two cards from a three card deck returns the first two cards" $ do
+            let cards = V.fromList [ Card Jack Spade, Card Ace Spade, Card Queen Spade ]
+            let Just (twoCards, cards') = getCards 2 cards
+            let remainingCard = V.toList cards'
+            twoCards `shouldContain` [Card Jack Spade, Card Ace Spade]
+            remainingCard `shouldContain` [Card Queen Spade]

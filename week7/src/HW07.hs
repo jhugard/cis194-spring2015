@@ -191,8 +191,29 @@ nextCard d
 
 -- Exercise 12 ----------------------------------------
 
+{-
+  Int -> Deck  ==>
+    Maybe (Card, Deck) ==>
+      [ Maybe (Card, Deck) ] ==>
+        Maybe ([Card], Deck)
+-}
+
 getCards :: Int -> Deck -> Maybe ([Card], Deck)
-getCards = undefined
+getCards n d
+  | n > V.length d = Nothing
+  | n == 0 = Just ([], d)
+  | otherwise =
+    aux n ([], d)
+    where
+      aux 0 acc =
+        let (xs,remainingCards) = acc in
+        Just (reverse xs, remainingCards)
+      aux n'' acc = do
+        let (rest'',d') = acc
+        nxt <- nextCard d'
+        let (c'',d'') = nxt
+        aux (n''-1) (c'' : rest'', d'')
+
 
 -- Exercise 13 ----------------------------------------
 
